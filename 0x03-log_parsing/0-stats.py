@@ -1,43 +1,23 @@
 #!/usr/bin/python3
-'''A script that generates random HTTP request logs.
+'''A script that generates random HTTP request logs. By Okpako Michasel
 '''
+import random
 import sys
-import re
+import datetime
+from time import sleep
 
-def process_line(line):
-    # Define the regular expression pattern for matching the input format
-    pattern = re.compile(r'^(\d+\.\d+\.\d+\.\d+) - \[.*\] "GET /projects/260 HTTP/1\.1" (\d+) (\d+)$')
 
-    match = pattern.match(line)
-    if match:
-        ip_address, status_code, file_size = match.groups()
-        return int(status_code), int(file_size)
-    else:
-        return None, None
-
-def print_metrics(total_size, status_counts):
-    print(f"Total file size: {total_size}")
-    for code in sorted(status_counts):
-        print(f"{code}: {status_counts[code]}")
-
-def main():
-    total_size = 0
-    status_counts = {}
-
-    try:
-        for line_number, line in enumerate(sys.stdin, start=1):
-            status_code, file_size = process_line(line.strip())
-
-            if status_code is not None and file_size is not None:
-                total_size += file_size
-                status_counts[status_code] = status_counts.get(status_code, 0) + 1
-
-            if line_number % 10 == 0:
-                print_metrics(total_size, status_counts)
-
-    except KeyboardInterrupt:
-        print_metrics(total_size, status_counts)
-
-if __name__ == "__main__":
-    main()
-
+for i in range(10000):
+    sleep(random.random())
+    sys.stdout.write("{:d}.{:d}.{:d}.{:d} - [{}] \"GET {} {}\" {} {}\n".format(
+        random.randint(1, 255),
+        random.randint(1, 255),
+        random.randint(1, 255),
+        random.randint(1, 255),
+        datetime.datetime.now(),
+        '/projects/1216',
+        'HTTP/1.1',
+        random.choice([200, 301, 400, 401, 403, 404, 405, 500]),
+        random.randint(1, 1024)
+    ))
+    sys.stdout.flush()
